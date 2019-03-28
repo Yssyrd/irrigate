@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<!-- saved from url=(0052)http://getbootstrap.com/docs/4.0/examples/dashboard/ -->
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<meta name="description" content="">
+		<meta name="author" content="">
+
+		<title>Dashboard Template for Bootstrap</title>
+		<!-- Bootstrap core CSS -->
+		<link href="asserts/css/bootstrap.min.css" th:href="@{/webjars/bootstrap/4.0.0/css/bootstrap.css}" rel="stylesheet">
+
+		<!-- Custom styles for this template -->
+		<link href="asserts/css/dashboard.css" th:href="@{/asserts/css/dashboard.css}" rel="stylesheet">
+	</head>
+
+	<body>
+		<!--引入抽取的topbar-->
+		<!--模板名：会使用thymeleaf的前后缀配置规则进行解析-->
+		<div th:replace="commons/bar::topbar"></div>
+
+		<div class="container-fluid">
+			<div class="row">
+				<!--引入侧边栏-->
+				<div th:replace="commons/bar::#sidebar(activeUri='users')"></div>
+
+				<main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+					<!--需要区分是员工修改还是添加；-->
+					<form th:action="@{/user}" id="addUser" method="post">
+						<!--发送put请求修改员工数据-->
+						<!--
+						1、SpringMVC中配置HiddenHttpMethodFilter;（SpringBoot自动配置好的）
+						2、页面创建一个post表单
+						3、创建一个input项，name="_method";值就是我们指定的请求方式
+						-->
+						<input type="hidden" name="_method" value="put" th:if="${user!=null}"/>
+						<input type="hidden" name="id" th:if="${user!=null}" th:value="${user.id}">
+						<div class="row">
+							<div class="col-md-3 mb-3"></div>
+							<div class="col-md-6 mb-3">
+								<label>用户名</label>
+								<input name="username" type="text" class="form-control" 
+									placeholder="请输入用户名" th:value="${user!=null}?${user.username}" required>
+							</div>
+							
+						</div>
+						<div class="row">
+							<div class="col-md-3 mb-3"></div>
+							<div class="col-md-6 mb-3">
+								<label>昵称</label>
+								<input name="nickName" type="text" class="form-control" 
+									placeholder="请输入昵称" th:value="${user!=null}?${user.nickName}" required>
+							</div>
+						</div>
+						<div class="row" th:style="'display:' + @{(${user!=null} ? 'none' : '')} + ''">
+							<div class="col-md-3 mb-3"></div>
+							<div class="col-md-6 mb-3">
+								<label>密码</label>
+								<input name="password" type="password" class="form-control psw" 
+									placeholder="请输入密码" th:value="${user!=null}?${user.password}" 
+									required>
+							</div>
+						</div>
+						<div class="row" th:style="'display:' + @{(${user!=null} ? 'none' : '')} + ''">
+							<div class="col-md-3 mb-3"></div>
+							<div class="col-md-6 mb-3">
+								<label>确认密码</label>
+								<input name="password_cfm" type="password" class="form-control psw_cfm" 
+									placeholder="请确认密码" th:value="${user!=null}?${user.password}" 
+									required>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-3 mb-3"></div>
+							<div class="col-md-6 mb-3">
+								<label>性别</label><br/>
+								<div class="custom-control custom-radio">
+					               <input id="male" name="gender" type="radio" class="custom-control-input" checked 
+					                value ="1" th:checked="${user==null}?true:(${user!=null}?${user.gender=='1'})"
+					                required>
+					                <label class="custom-control-label" for="male">男</label>
+					            </div>
+					            <div class="custom-control custom-radio">
+					               <input id="female" name="gender" type="radio" class="custom-control-input" 
+					                value ="0" th:checked="${user!=null}?${user.gender=='0'}"
+					                required >
+					                <label class="custom-control-label" for="female">女</label>
+					            </div>
+							</div>
+							<input type="hidden" name="phone" th:value = "${user!=null}?${user.phone}">
+							<input type="hidden" name="status" th:value = "${user!=null}?${user.status}">
+							<input type="hidden" name="auth" th:value = "${user!=null}?${user.auth}">
+							<input type="hidden" name="remark" th:value = "${user!=null}?${user.remark}">
+						</div>
+						<div class="row">
+							<div class="col-md-3 mb-3"></div>
+							<div class="col-md-6 mb-3">
+								<button type="button" class="btn btn-primary btn-block btnSubmit" th:text="${user!=null}?'修改':'添加'">添加</button>
+							</div>
+						</div>
+						
+					</form>
+				</main>
+			</div>
+		</div>
+
+		<!-- Bootstrap core JavaScript
+    ================================================== -->
+		<!-- Placed at the end of the document so the pages load faster -->
+		<script type="text/javascript" src="asserts/js/jquery-3.2.1.slim.min.js" th:src="@{/webjars/jquery/3.3.1/jquery.js}"></script>
+		<script type="text/javascript" src="asserts/js/popper.min.js" th:src="@{/webjars/popper.js/1.11.1/dist/popper.js}"></script>
+		<script type="text/javascript" src="asserts/js/bootstrap.min.js" th:src="@{/webjars/bootstrap/4.0.0/js/bootstrap.js}"></script>
+		<script type="text/javascript" src="asserts/js/feather.min.js" th:src="@{/asserts/js/feather.min.js}"></script>
+		
+		<script>
+			feather.replace();
+			(function() {
+		        'use strict';
+	
+		        window.addEventListener('load', function() {
+		          // Fetch all the forms we want to apply custom Bootstrap validation styles to
+		          var forms = document.getElementsByClassName('needs-validation');
+	
+		          // Loop over them and prevent submission
+		          var validation = Array.prototype.filter.call(forms, function(form) {
+		            form.addEventListener('submit', function(event) {
+		              if (form.checkValidity() === false) {
+		                event.preventDefault();
+		                event.stopPropagation();
+		                form.classList.add('was-validated');
+		              }
+		            }, false);
+		          });
+		        }, false);
+	      })();
+		</script>
+		<script type="text/javascript">
+		
+		$(".btnSubmit").click(function(){
+			if($(".psw").val()==$(".psw_cfm").val()){
+				 $("#addUser").submit();
+			}else{
+				alert("两次输入的密码不一致！");
+			}
+	    });
+		</script>
+	</body>
+
+</html>

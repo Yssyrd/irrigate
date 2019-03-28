@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<!-- saved from url=(0052)http://getbootstrap.com/docs/4.0/examples/dashboard/ -->
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<meta name="description" content="">
+		<meta name="author" content="">
+
+		<title>Dashboard Template for Bootstrap</title>
+		<!-- Bootstrap core CSS -->
+		<link href="asserts/css/bootstrap.min.css" th:href="@{/webjars/bootstrap/4.0.0/css/bootstrap.css}" rel="stylesheet">
+
+		<!-- Custom styles for this template -->
+		<link href="asserts/css/dashboard.css" th:href="@{/asserts/css/dashboard.css}" rel="stylesheet">
+	</head>
+
+	<body>
+		<!--引入topbar-->
+		<div th:replace="commons/bar::topbar"></div>
+		<div class="container-fluid">
+			<div class="row">
+				<!--引入sidebar-->
+				<div th:replace="commons/bar::#sidebar(activeUri='main.html')"></div>
+				<main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+					<form class="needs-validation" th:action="@{/terminal}" method="post" novalidate>
+						<input type="hidden" name="_method" value="put" th:if="${terminal!=null}"/>
+  						<input type="hidden" name="id" th:if="${terminal!=null}" th:value="${terminal.id}">
+						<div class="row">
+							<div class="col-md-6 mb-3">
+								<label for="lastName">终端名称</label> <input type="text"
+									class="form-control" name="name" placeholder="" 
+									th:value="${terminal!=null}?${terminal.name}"
+									required>
+								<div class="invalid-feedback">终端名称不能为空</div>
+							</div>
+							<div class="col-md-6 mb-3">
+								<label for="proId">产品编号</label> <input type="text"
+									class="form-control" name="proId" placeholder="" value=""
+									th:value="${terminal!=null}?${terminal.proId}"
+									required>
+								<div class="invalid-feedback">产品编号不能为空</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-6 mb-3">
+								<label for="loraAddr">Lora模块地址</label> <input type="text"
+									class="form-control" name="loraAddr" placeholder=""
+									th:value="${terminal!=null}?${terminal.loraAddr}"
+									value="" required>
+								<div class="invalid-feedback">Lora模块地址不能为空</div>
+							</div>
+							<div class="col-md-6 mb-3">
+								<label for="loraChannel">Lora信道</label> <input type="text"
+									class="form-control" name="loraChannel" placeholder="" value=""
+									th:value="${terminal!=null}?${terminal.loraChannel}" 
+									oninput="if(value.length>2)value=value.slice(0,2)"
+									required>
+								<div class="invalid-feedback">Lora信道不能为空</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-6 mb-3">
+								<label for="firstName">出厂编号</label> <input type="text"
+									class="form-control" name="proDate" placeholder="" value=""
+									th:value="${terminal!=null}?${terminal.proDate}"
+									required>
+								<div class="invalid-feedback">出厂编号不能为空</div>
+							</div>
+							
+							<div class="col-md-6 mb-3">
+								<label for="lastName">版本号</label> <input type="text"
+									class="form-control" name="version" placeholder="" value=""
+									th:value="${terminal!=null}?${terminal.version}"
+									required>
+								<div class="invalid-feedback">版本号不能为空</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-6 mb-3">
+								<label for="firstName">物理地址</label> <input type="text"
+									class="form-control" name="physicalAddr" placeholder="" value=""
+									th:value="${terminal!=null}?${terminal.physicalAddr}"
+									required>
+								<div class="invalid-feedback">物理地址不能为空</div>
+							</div>
+							
+							<div class="col-md-6 mb-3">
+								<label for="firstName">用户绑定</label> 
+								<select class="form-control" name="userId">
+									<option value="-1" > --请选择用户-- </option>
+									<option th:each="user:${users}"
+										th:selected="${terminal!=null}?${terminal.userId == user.id + ''}" 
+										th:value="${user.id}" 
+										th:text="${user.username}"></option>
+								</select>
+							</div>
+						</div>
+						<input type="hidden" name="SN" th:value="${terminal!=null}?${terminal.SN}">
+						<input type="hidden" name="loginDate" 
+							th:value="${terminal!=null}?${#dates.format(terminal.loginDate, 'yyyy-MM-dd HH:mm:ss')}">
+						<hr class="mb-4">
+    					<button class="btn btn-primary btn-lg btn-block" th:text="${terminal!=null}?'修改':'添加'"
+    						 type="submit">确定插入</button>
+					</form>
+				</main>
+			</div>
+		</div>
+	
+		<!-- Bootstrap core JavaScript
+	    ================================================== -->
+		<!-- Placed at the end of the document so the pages load faster -->
+		<script type="text/javascript"
+			src="asserts/js/jquery-3.2.1.slim.min.js"
+			th:src="@{/webjars/jquery/3.3.1/jquery.js}"></script>
+		<script type="text/javascript" src="asserts/js/popper.min.js"
+			th:src="@{/webjars/popper.js/1.11.1/dist/popper.js}"></script>
+		<script type="text/javascript" src="asserts/js/bootstrap.min.js"
+			th:src="@{/webjars/bootstrap/4.0.0/js/bootstrap.js}"></script>
+		<script type="text/javascript" src="myJs/dashboard.js"></script>
+		<!-- Icons -->
+		<script type="text/javascript" src="asserts/js/feather.min.js"
+			th:src="@{/asserts/js/feather.min.js}"></script>
+	
+		<!-- Graphs -->
+		<script type="text/javascript" src="asserts/js/Chart.min.js"
+			th:src="@{/asserts/js/Chart.min.js}"></script>
+		<script type="text/javascript">
+		(function() {
+	        'use strict';
+
+	        window.addEventListener('load', function() {
+	          // Fetch all the forms we want to apply custom Bootstrap validation styles to
+	          var forms = document.getElementsByClassName('needs-validation');
+
+	          // Loop over them and prevent submission
+	          var validation = Array.prototype.filter.call(forms, function(form) {
+	            form.addEventListener('submit', function(event) {
+	              if (form.checkValidity() === false) {
+	                event.preventDefault();
+	                event.stopPropagation();
+	                form.classList.add('was-validated');
+	              }
+	            }, false);
+	          });
+	        }, false);
+	      })();
+		
+		</script>
+	</body>
+
+</html>
