@@ -46,25 +46,32 @@ public class DashboardController {
 	
 	@RequestMapping("/getBaseInfo")
     @ResponseBody
-    public JSONObject getBaseInfo(@RequestParam(value="userId", required=true) Integer id) {
+    public JSONObject getBaseInfo(@RequestParam(value="userId", required=true) String id) {
 		
 		JSONObject result = new JSONObject();
 		JSONArray terArr = new JSONArray();
 		EntityToJson toJson = new EntityToJson();
 		
-		Optional<User> user = userRepo.findById(id);
+		User user = new User();
+		user.setPhone(id);
+		Example<User> ex = Example.of(user);
+		Optional<User> one = userRepo.findOne(ex);
+		if(!one.isPresent()){
+			return result;
+		}
+		user = one.get();
 		UserUnion union = new UserUnion();
-		union.setUserId(user.get().getId().toString());
+		union.setUserId(user.getId().toString());
 		Example<UserUnion> unionEx = Example.of(union);
 	 	Optional<UserUnion> userUnion = unionRepo.findOne(unionEx);
 	 	if(userUnion.isPresent()){
-	 		result.put("user", toJson.objToJson(user.get(),userUnion.get()));
+	 		result.put("user", toJson.objToJson(user,userUnion.get()));
 	 	}else{
-	 		result.put("user", toJson.objToJson(user.get(),null));
+	 		result.put("user", toJson.objToJson(user,null));
 	 	}
 	 	
 		Terminal ter = new Terminal();
-		ter.setUserId(user.get().getId().toString());
+		ter.setUserId(user.getId().toString());
 		Example<Terminal> example = Example.of(ter);
 		List<Terminal> terList = termialRepo.findAll(example);
 		for (Terminal terminal : terList) {
@@ -82,14 +89,21 @@ public class DashboardController {
 		JSONArray nodeArr = new JSONArray();
 		EntityToJson toJson = new EntityToJson();
 		
+		Terminal ter = new Terminal();
+		ter.setSN(id);
+		Example<Terminal> tEx = Example.of(ter);
+		Optional<Terminal> one = termialRepo.findOne(tEx);
+		if(!one.isPresent()){
+			return nodeArr;
+		}
+		ter = one.get();
 		Node node = new Node();
-		node.setTerminal(id);
+		node.setTerminal(ter.getId().toString());
 		Example<Node> nEx = Example.of(node);
 		List<Node> nodeList = nodeRepo.findAll(nEx);
 		for (Node nodes : nodeList) {
 			nodeArr.add(toJson.objToJson(nodes));
 		}
-		
 		return nodeArr;
 	}
 	
@@ -100,6 +114,7 @@ public class DashboardController {
 		mav.addObject("cid", cid);
 		return mav;
 	}
+	
 	//推送数据接口
 	@RequestMapping("/socket/push")
 	@ResponseBody

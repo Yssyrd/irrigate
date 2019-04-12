@@ -18,9 +18,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.yrd.farm.entities.Node;
 import com.yrd.farm.entities.Terminal;
-import com.yrd.farm.repository.GetUUID;
 import com.yrd.farm.repository.NodeRepository;
 import com.yrd.farm.repository.TerminalRepository;
+import com.yrd.farm.service.GetUUID;
 
 
 @Controller

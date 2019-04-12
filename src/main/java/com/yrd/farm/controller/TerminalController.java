@@ -16,9 +16,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 
 import com.yrd.farm.entities.Terminal;
 import com.yrd.farm.entities.User;
-import com.yrd.farm.repository.GetUUID;
 import com.yrd.farm.repository.TerminalRepository;
 import com.yrd.farm.repository.UserRepository;
+import com.yrd.farm.service.GetUUID;
 
 @Controller
 public class TerminalController {

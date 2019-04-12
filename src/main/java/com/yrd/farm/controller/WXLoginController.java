@@ -4,12 +4,15 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.yrd.farm.common.HttpClientUtil;
+import com.yrd.farm.entities.Terminal;
 import com.yrd.farm.entities.User;
 import com.yrd.farm.entities.UserUnion;
 import com.yrd.farm.repository.UserRepository;
@@ -30,6 +33,7 @@ public class WXLoginController {
 	public JSONObject wxLogin(String data) {
 		JSONObject res = new JSONObject();
 		JSONObject obj = JSONObject.fromObject(data); 
+		res.put("data", new JSONObject());
 
 		if(obj.getString("code")==null||obj.getString("code").equals("")||obj.getString("code").length()<1){
 			res.put("code", "-1");
@@ -39,20 +43,22 @@ public class WXLoginController {
 		String code = obj.getString("code");
 		String url = "https://api.weixin.qq.com/sns/jscode2session";
 		Map<String, String> param = new HashMap<>();
-		param.put("appid", "wx544d45f6ce6ae390");
-		param.put("secret", "3f87b3a3ba73d334995e575e0cc13295");
+		param.put("appid", "wxd6cc9c2f1d963190");
+		param.put("secret", "b8089dad0ee4fdc2437be73441d012eb");
 		param.put("js_code", code);
 		param.put("grant_type", "authorization_code");
 		
-		String openId = HttpClientUtil.doGet(url, param);
 		
-		if(openId==null||openId.equals("")){
+		String resStr = HttpClientUtil.doGet(url, param);
+		if(resStr==null||resStr.equals("")){
 			res.put("code", "-1");
 			res.put("msg", "调用微信出错");
 			return res;
 		}
+		JSONObject resObj = JSONObject.fromObject(resStr);
+		String openId = resObj.getString("openid");
 		
-		String nickName = obj.getString("nickname");
+		String nickName = obj.getString("nickName");
 		String avatar = obj.getString("avatarUrl");
 		String city = obj.getString("city");
 		String gender = obj.getString("gender");
@@ -74,21 +80,59 @@ public class WXLoginController {
 		
 		unionService.saveAndFlush(union);
 		
+		JSONObject token = new JSONObject();
+		token.put("token", user.getId().toString());
 		res.put("code", "200");
 		res.put("msg", "操作成功");
-		res.put("data", user.getId().toString());
+		res.put("data", token);
 		return res;
 	}
 	
 	@PostMapping("/wx/member/check-reg")
-	public JSONObject wxCheck(String data) {
-		
-		System.out.println("bbbbbbbbbbbbbbbbb");
+	public JSONObject wxCheck(String code) {
+		System.out.println(code);
 		JSONObject res = new JSONObject();
+		res.put("data", new JSONObject());
+		JSONObject obj = new JSONObject();
 		
+		if(code==null||code.equals("")||code.length()<1){
+			res.put("code", "-1");
+			res.put("msg", "需要code");
+			return res;
+		}
+		
+		String url = "https://api.weixin.qq.com/sns/jscode2session";
+		Map<String, String> param = new HashMap<>();
+		param.put("appid", "wxd6cc9c2f1d963190");
+		param.put("secret", "b8089dad0ee4fdc2437be73441d012eb");
+		param.put("js_code", code);
+		param.put("grant_type", "authorization_code");
+		
+		String resStr = HttpClientUtil.doGet(url, param);
+		if(resStr==null||resStr.equals("")){
+			res.put("code", "-1");
+			res.put("msg", "调用微信出错");
+			return res;
+		}
+		System.out.println(resStr);
+		JSONObject resObj = JSONObject.fromObject(resStr);
+		String openId = resObj.getString("openid");
+		UserUnion uu = new UserUnion();
+		uu.setOpenId(openId);
+		Example<UserUnion> example = Example.of(uu);
+		Optional<UserUnion> one = unionService.findOne(example);
+		if(!one.isPresent()){
+			res.put("code", "-1");
+			res.put("msg", "未绑定");
+			return res;
+		}
+		uu = one.get();
+		obj.put("token", uu.getUserId());
+		System.out.println(uu);
+		System.out.println(uu.getUserId());
 		res.put("code", "200");
 		res.put("msg", "操作成功");
-		
+		res.put("data", obj);
 		return res;
 	}
 }

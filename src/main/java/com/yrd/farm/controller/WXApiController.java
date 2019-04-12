@@ -3,10 +3,18 @@ package com.yrd.farm.controller;
 import java.util.List;
 import java.util.Optional;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.http.HttpHeaders;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.yrd.farm.common.EntityToJson;
 import com.yrd.farm.entities.Terminal;
@@ -35,9 +43,14 @@ public class WXApiController {
 	@Autowired
 	private NodeRepository nodeRepo;
 	
-	@PostMapping("/wx/dev/allTerminal")
-	public JSONObject allTerminal(String id) {
+	 @Autowired  
+     private HttpServletRequest request;  
+	
+	@RequestMapping(value="/wx/dev/allTerminal", method=RequestMethod.GET)
+	@ResponseBody
+	public JSONObject allTerminal() {
 		
+		String id = request.getHeader("Authorization");
 		JSONObject res = new JSONObject();
 		
 		if(id==null||id.trim().equals("")){
@@ -69,10 +82,24 @@ public class WXApiController {
 		return res;
 	}
 	
-	@PostMapping("/wx/dev/searchDev")
-	public JSONObject searchDev(String name, String id) {
+	@PostMapping("/wx/dev/searchDevTer")
+	public JSONObject searchDevTer(String name, String id) {
 		
 		JSONObject res = new JSONObject();
+		
+		
+		
+		
+		return res;
+	}
+	
+	@PostMapping("/wx/dev/searchDevNode")
+	public JSONObject searchDevNode(String name, String id) {
+		
+		JSONObject res = new JSONObject();
+		
+		
+		
 		
 		return res;
 	}

@@ -45,7 +45,7 @@ public class LoginController {
         if(userService.exists(example)){
             //登陆成功，防止表单重复提交，可以重定向到主页
             session.setAttribute("loginUser",username);
-            session.setAttribute("userId", one.get().getId());
+            session.setAttribute("userId", one.get().getPhone());
             return "redirect:/main.html";
         }else{
             //登陆失败

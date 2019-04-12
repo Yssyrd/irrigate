@@ -1,4 +1,4 @@
-package com.yrd.farm.repository;
+package com.yrd.farm.service;
 
 public interface GetUUID {
 	public String get32UUID();

@@ -1,10 +1,10 @@
-package com.yrd.farm.repository.imp;
+package com.yrd.farm.service.imp;
 
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
-import com.yrd.farm.repository.GetUUID;
+import com.yrd.farm.service.GetUUID;
 
 @Service
 public class GetUUIDImp implements GetUUID {
